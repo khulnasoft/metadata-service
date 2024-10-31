@@ -1,0 +1,6 @@
+.github
+.idea
+helm
+Dockerfile
+*.md
+docker-compose.yml
