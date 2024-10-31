@@ -6,11 +6,11 @@ on:
       - main
 
 env:
-  TAGNAME: "us-central1-docker.pkg.dev/codium-development/codium-repo/metadata-service:build-${{github.run_number}}"
+  TAGNAME: "us-central1-docker.pkg.dev/khulnasoft-development/khulnasoft-repo/metadata-service:build-${{github.run_number}}"
   ARGOCD_CLI_VERSION: "2.10.6"
 
 jobs:
-  deploy-codium-development:
+  deploy-khulnasoft-development:
     runs-on: [ubuntu-latest]
 
     permissions:
@@ -31,7 +31,7 @@ jobs:
         with:
           token_format: access_token
           workload_identity_provider: projects/430654255805/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider
-          service_account: github-actions@codium-development.iam.gserviceaccount.com
+          service_account: github-actions@khulnasoft-development.iam.gserviceaccount.com
           access_token_lifetime: 300s
 
       - name: Login to Artifact Registry
@@ -60,7 +60,7 @@ jobs:
 
       - name: Log in to Argo CD DEV
         env:
-          ARGOCD_SERVER: argocd.dev.codium-inc.com
+          ARGOCD_SERVER: argocd.dev.khulnasoft-inc.com
           ARGOCD_USERNAME: admin
           ARGOCD_PASSWORD: ${{ secrets.DEV_ARGOCD_PASSWORD }}
         run: |
@@ -71,7 +71,7 @@ jobs:
           HOME: .
         run: |
             argocd app create metadata-service \
-              --project codium \
+              --project khulnasoft \
               --repo https://github.com/KhulnaSoft/metadata-service.git \
               --path helm \
               --revision refs/heads/main \

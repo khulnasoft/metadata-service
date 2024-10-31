@@ -6,11 +6,11 @@ on:
       - production
 
 env:
-  TAGNAME: "us-central1-docker.pkg.dev/codium-production/codium-repo/metadata-service:build_b${{github.run_number}}"
+  TAGNAME: "us-central1-docker.pkg.dev/khulnasoft-production/khulnasoft-repo/metadata-service:build_b${{github.run_number}}"
   ARGOCD_CLI_VERSION: "2.10.6"
 
 jobs:
-  deploy-codium:
+  deploy-khulnasoft:
     runs-on: [ubuntu-latest]
 
     permissions:
@@ -31,7 +31,7 @@ jobs:
         with:
           token_format: access_token
           workload_identity_provider: projects/67590289846/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider
-          service_account: github-actions@codium-production.iam.gserviceaccount.com
+          service_account: github-actions@khulnasoft-production.iam.gserviceaccount.com
           access_token_lifetime: 300s
 
       - name: Login to Artifact Registry
@@ -60,7 +60,7 @@ jobs:
 
       - name: Log in to Argo CD HiBob ST
         env:
-          ARGOCD_SERVER: argocd.hibob.st.codium.ai
+          ARGOCD_SERVER: argocd.hibob.st.khulnasoft.ai
           ARGOCD_USERNAME: admin
           ARGOCD_PASSWORD: ${{ secrets.ST_HIBOB_ARGOCD_PASSWORD }}
         run: |
@@ -71,7 +71,7 @@ jobs:
           HOME: .
         run: |
             argocd app create metadata-service \
-              --project codium \
+              --project khulnasoft \
               --repo https://github.com/KhulnaSoft/metadata-service.git \
               --path helm \
               --revision refs/heads/production \
@@ -85,7 +85,7 @@ jobs:
 
       - name: Log in to Argo CD Taxfix ST
         env:
-          ARGOCD_SERVER: argocd.taxfix.st.codium.ai
+          ARGOCD_SERVER: argocd.taxfix.st.khulnasoft.ai
           ARGOCD_USERNAME: admin
           ARGOCD_PASSWORD: ${{ secrets.ST_TAXFIX_ARGOCD_PASSWORD }}
         run: |
@@ -96,7 +96,7 @@ jobs:
           HOME: .
         run: |
             argocd app create metadata-service \
-              --project codium \
+              --project khulnasoft \
               --repo https://github.com/KhulnaSoft/metadata-service.git \
               --path helm \
               --revision refs/heads/production \
@@ -110,7 +110,7 @@ jobs:
 
       - name: Log in to Argo CD Intuitive Surgical ST
         env:
-          ARGOCD_SERVER: argocd.intuitive-surgical.st.codium.ai
+          ARGOCD_SERVER: argocd.intuitive-surgical.st.khulnasoft.ai
           ARGOCD_USERNAME: admin
           ARGOCD_PASSWORD: ${{ secrets.ST_INTUITIVE_SURGICAL_ARGOCD_PASSWORD }}
         run: |
@@ -121,7 +121,7 @@ jobs:
           HOME: .
         run: |
             argocd app create metadata-service \
-              --project codium \
+              --project khulnasoft \
               --repo https://github.com/KhulnaSoft/metadata-service.git \
               --path helm \
               --revision refs/heads/production \
@@ -134,7 +134,7 @@ jobs:
               --upsert
       - name: Log in to Argo CD Next Insurance ST
         env:
-          ARGOCD_SERVER: argocd.next-insurance.st.codium.ai
+          ARGOCD_SERVER: argocd.next-insurance.st.khulnasoft.ai
           ARGOCD_USERNAME: admin
           ARGOCD_PASSWORD: ${{ secrets.ST_NEXT_INSURANCE_ARGOCD_PASSWORD }}
         run: |
@@ -145,7 +145,7 @@ jobs:
           HOME: .
         run: |
             argocd app create metadata-service \
-              --project codium \
+              --project khulnasoft \
               --repo https://github.com/KhulnaSoft/metadata-service.git \
               --path helm \
               --revision refs/heads/production \

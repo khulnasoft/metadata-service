@@ -2,7 +2,7 @@ name: Build and push metadata-service for intuit
 on: ["workflow_dispatch"]
 
 jobs:
-  deploy-codium-development:
+  deploy-khulnasoft-development:
     runs-on: [ubuntu-latest]
 
     permissions:

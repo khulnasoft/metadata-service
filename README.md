@@ -87,7 +87,7 @@ If this doesn't work, please do:
 1. check with Ori you have k8s permission
 2. configure kubectl:
 ```sh
-gcloud container clusters get-credentials development-cluster --region us-central1 --project codium-development
+gcloud container clusters get-credentials development-cluster --region us-central1 --project khulnasoft-development
 ```
 This will add the cluster to your ~/.kube/config
 
