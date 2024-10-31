@@ -1,0 +1,3 @@
+.khulnasoft
+venv
+app/config/.secrets.toml
