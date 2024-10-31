@@ -1,0 +1,98 @@
+{
+    "offset": 0,
+    "filters": [
+        {
+            "field": "name",
+            "field_type": "string",
+            "filter_type": "starts_with",
+            "values": [
+                "j"
+            ]
+        },
+        {
+            "field": "description",
+            "field_type": "string",
+            "filter_type": "contains",
+            "values": [
+                "Desc"
+            ]
+        }
+    ],
+    "filters_operator": "or",
+    "sorts": [
+        {
+            "field": "id",
+            "sort_type": "asc"
+        }
+    ],
+    "limit": 100
+}
+// list entity tags
+{
+  "filters": [        {
+            "field": "entity_id",
+            "field_type": "string",
+            "filter_type": "equals",
+            "values": [
+"/home/repo2"
+            ]
+        }],
+  "filters_operator": "and",
+  "sorts": [],
+  "limit": 100,
+  "offset": 0
+}
+// search entities with tags (against entity_tags table)
+{
+  "filters": [
+            {
+                "field": "tag_id",
+                "field_type": "string",
+                "filter_type": "equals",
+                "values": [
+                    "1", "2", "3"
+                ]
+            }
+        ],
+  "filters_operator": "and",
+  "sorts": [],
+  "limit": 100,
+  "offset": 0
+}
+
+[
+  {
+    "entity_id": "/repo1",
+    "entity_type": "repo",
+    "tag_groups": [
+      {
+        "tag_group_name": "colors",
+        "tag_names": [
+          "red", "green", "blue"
+        ]
+      }
+    ]
+  },
+  {
+    "entity_id": "/repo2",
+    "entity_type": "repo",
+    "tag_groups": [
+      {
+        "tag_group_name": "favorite harry potter character",
+        "tag_names": [
+          "Ron", "Hermiony", "Harry"
+        ]
+      }
+    ]
+  }
+]
+
+
+
+Test scenarious:
+
+testing configuration
+testing environments
+test configuration hierarchy (env -> config -> default)
+
+compare Base.metadata.create_all(engine) with results of alembic upgrade head

@@ -1,0 +1,7 @@
+[kubernetes]
+
+DATABASE_PORT = "5432"
+LOG_LEVEL = "debug"
+CONFIG.ANALYTICS_FOLDER = ""
+LOG_SANE = "false"
+

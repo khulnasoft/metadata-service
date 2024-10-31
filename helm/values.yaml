@@ -1,0 +1,3 @@
+image: us-central1-docker.pkg.dev/codium-development/codium-repo/metadata-service:dev
+namespace: metadata-service
+use_external_secrets: true

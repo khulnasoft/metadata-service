@@ -1,0 +1,80 @@
+name: Build and push metadata-service for intuit
+on: ["workflow_dispatch"]
+
+jobs:
+  deploy-codium-development:
+    runs-on: [ubuntu-latest]
+
+    permissions:
+        contents: 'write'
+        id-token: 'write'
+
+    steps:
+      - name : Checkouts
+        uses: actions/checkout@v2
+
+      - id: dockerx
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Intuit Azure container registry
+        uses: docker/login-action@v3
+        with:
+          registry: intuitpragent.azurecr.io
+          username: ${{ secrets.INTUIT_ACR_USERNAME }}
+          password: ${{ secrets.INTUIT_ACR_PASSWORD }}
+
+      - name: Set short commit SHA and app version as environment variables
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+          echo "APP_VERSION=intuit-b${GITHUB_RUN_NUMBER}_$calculatedSha" >> $GITHUB_ENV
+
+      - name: Build push
+        run: |
+          tagname="intuitpragent.azurecr.io/metadata-service:intuit-b${GITHUB_RUN_NUMBER}"
+          tagname_latest="intuitpragent.azurecr.io/metadata-service:latest"
+          echo $tagname
+          docker build --build-arg APP_VERSION=${{ env.APP_VERSION }} -t $tagname .
+          docker tag $tagname $tagname_latest
+          docker push $tagname
+          docker push $tagname_latest
+          # update values file with image number
+          sed -i "s|image: .*|image: $tagname|g" helm/values.yaml
+          sed -i "s|use_external_secrets: .*|use_external_secrets: false|g" helm/values.yaml
+
+      - name: Create helm chart zip
+        run: |
+          zip -r metadata-service-helm.zip helm
+          echo "metadata-service-helm.zip created"
+
+      - name: Upload helm chart zip as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: metadata-service-helm
+          path: metadata-service-helm.zip
+
+      # Snyk integration
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+      - name: Authenticate Snyk
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+      - name: Scan Docker image with Snyk
+        run: |
+          snyk container test intuitpragent.azurecr.io/metadata-service:intuit-b${GITHUB_RUN_NUMBER} --severity-threshold=high --json > snyk-report.json || echo "Snyk scan completed with issues."
+      - name: Check for vulnerabilities
+        run: |
+          CRITICAL_ISSUES=$(jq '.vulnerabilities[] | select(.severity=="critical")' snyk-report.json)
+          MAJOR_ISSUES=$(jq '.vulnerabilities[] | select(.severity=="high")' snyk-report.json)
+          if [[ -n "$CRITICAL_ISSUES" || -n "$MAJOR_ISSUES" ]]; then
+            echo "Critical vulnerabilities:"
+            echo "$CRITICAL_ISSUES" | jq .
+            echo "Major vulnerabilities:"
+            echo "$MAJOR_ISSUES" | jq .
+            echo "Critical or major vulnerabilities found, but continuing workflow."
+            exit 1
+          else
+            echo "No critical or major vulnerabilities found."
+          fi    
+
+

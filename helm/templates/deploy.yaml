@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadata-service
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: metadata-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app:
+        metadata-service
+  template:
+    metadata:
+      namespace: {{ .Values.namespace }}
+      labels:
+        app:
+          metadata-service
+      {{- if .Values.create_secret }}
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+      {{- end }}
+    spec:
+      volumes:
+        - name: secrets-volume
+          secret:
+            secretName: {{ default "metadata-service-secrets" .Values.secret_name }}
+      {{- with .Values.image_pull_secret }}
+      imagePullSecrets:
+          - name: {{ . }}
+      {{- end }}
+      containers:
+        - name: metadata-service
+          image: {{ .Values.image }}
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: '1'
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - name: secrets-volume
+              mountPath: /root/app/config_prod
+          env:
+            - name: APP_NAME
+              value: metadata-service
+            # The env var below defines section name in TOML secrets file. It's static for every k8s env
+            - name: ENV_FOR_DYNACONF
+              value: kubernetes
+{{- range .Values.additional_env_vars }}
+            - name: {{ .name }}
+              value: {{ .value }}
+{{- end }}
