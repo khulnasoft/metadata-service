@@ -1,0 +1,13 @@
+[file_filters]
+# unix pattern matching
+include = ['app/**/*.py', 'migrations/*']
+exclude = ['tests/*']
+
+[tags]
+# The following tag will be created automatically for the repository
+# repository="KhulnaSoft/metadata-service"
+project_type = "microservice"
+capability = ["tagging", "metadata management"]
+languages = ["python"]
+framework = ["fastapi", "sql-alchemy", "alembic" ]
+team = ["backend", "enterprize"]
