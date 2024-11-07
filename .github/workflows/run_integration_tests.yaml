@@ -1,0 +1,128 @@
+name: Run integration tests
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:   # Allows for manual triggering of the workflow
+jobs:
+  integration-tests:
+    permissions:
+      contents: 'write'
+      id-token: 'write'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+          cache: 'pip'
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Pylint
+        run: pylint .  --fail-under=10
+
+      - name: Run Black code formatter
+        uses: psf/black@stable
+
+      - name: Start DB Docker
+        run: docker compose up db -d
+
+      - run: sleep 5 # wait for PG to be ready
+      - run: docker ps -a
+
+      - name: Run alembic migrations
+        run: ENV_FOR_DYNACONF=test PYTHONPATH="$PYTHONPATH:." python ./app/schema_migration.py
+
+      - name: Run tests
+        run: ENV_FOR_DYNACONF=test PYTHONPATH="$PYTHONPATH:." pytest --cov=. --cov-fail-under=80 .
+
+      - name: Print current directory
+        run: pwd
+
+      - name: Start Metadata Service
+        run: ENV_FOR_DYNACONF=test PYTHONPATH="$PYTHONPATH:." python app/main.py &
+
+      - name: Generate current OpenAPI Spec
+        run: |
+          sleep 5 # Wait for the service to be ready
+          mkdir -p temp
+          curl -o temp/openapi-new.json http://localhost:4000/openapi.json
+
+      - name: Print top 3 lines of a file
+        run: head -n 3 temp/openapi-new.json
+
+      - name: Fetch base branch
+        if: github.event_name == 'pull_request'
+        run: git fetch origin ${{ github.event.pull_request.base.ref }}
+
+      - name: Checkout base commit
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          path: origin_branch
+
+      - name: Install dependencies (origin_branch)
+        if: github.event_name == 'pull_request'
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+        working-directory: origin_branch
+
+      - name: Start Metadata Service (origin_branch)
+        if: github.event_name == 'pull_request'
+        run: ENV_FOR_DYNACONF=test PORT=8000 PYTHONPATH="$PYTHONPATH:." python app/main.py &
+        working-directory: origin_branch
+
+      - name: Generate current OpenAPI Spec (origin_branch)
+        if: github.event_name == 'pull_request'
+        run: |
+          sleep 5 # Wait for the service to be ready
+          curl -o ../temp/openapi-origin.json http://localhost:8000/openapi.json
+        working-directory: origin_branch
+
+      - name: Print top 3 lines of a file (origin_branch)
+        if: github.event_name == 'pull_request'
+        run: head -n 3 temp/openapi-origin.json
+
+      - name: Running OpenAPI Spec diff action
+        if: github.event_name == 'pull_request'
+        id: test_breaking_changes
+        uses: oasdiff/oasdiff-action/breaking@main
+        with:
+          base: 'temp/openapi-origin.json'
+          revision: 'temp/openapi-new.json'
+
+      - name: Print breaking changes
+        run: echo "${{ steps.test_breaking_changes.outputs.breaking }}"
+
+      - name: Check for breaking changes
+        if: github.event_name == 'pull_request' && steps.test_breaking_changes.outputs.breaking != 'No breaking changes'
+        run: |
+          echo "Breaking changes detected in the OpenAPI specifications."
+          echo "${{ steps.test_breaking_changes.outputs.breaking }}"
+          exit 1
+
+      - name: Docker ps
+        if: failure()
+        run: docker ps -a
+
+      - name: Dump docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v2
+
+      - name: Stop and remove Docker containers
+        run: docker compose down

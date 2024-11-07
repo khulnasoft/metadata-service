@@ -93,38 +93,11 @@ def advanced_search(
         raise HTTPException(status_code=400, detail=str(e)) from e
 
 
-# remove after checking with Tal
-# @router.get("/tag_groups", response_model=List[TagGroupResponse])
-# def search_tag_groups(
-#     field: Optional[str] = Query(None, description="The field to search by"),
-#     value: Optional[str] = Query(None, description="The value to search for"),
-#     search_type: Optional[FilterType] = Query(
-#         FilterType.CONTAINS,
-#         description="The type of search: contains / exact / starts_with",
-#     ),
-#     is_case_sensitive: Optional[bool] = Query(
-#         False, description="Is the search case sensitive"
-#     ),
-#     service: TagGroupService = Depends(get_tag_group_service),
-# ):
-#     try:
-#         tag_groups = service.search(field, value, search_type, is_case_sensitive)
-#     except ValueError as e:
-#         raise HTTPException(status_code=400, detail=str(e)) from e
-#
-#     return [
-#         TagGroupResponse(
-#             id=tag_group.id, name=tag_group.name, description=tag_group.description
-#         )
-#         for tag_group in tag_groups
-#     ]
-
-
 @router.delete("/tag_groups/{tag_group_id}")
 def delete_tag_group(
     tag_group_id: int, service: TagGroupService = Depends(get_tag_group_service)
 ):
-    deleted_count = service.delete_by_id(tag_group_id)
+    deleted_count = service.delete(tag_group_id)
 
     if deleted_count == 0:
         raise HTTPException(status_code=404, detail="Tag group not found")

@@ -1,6 +1,7 @@
 """
 This module contains DTO models related to the EntityTag entity
 """
+
 from pydantic import BaseModel
 
 from app.api.v1.entity_tags.model import EntityTag

@@ -4,7 +4,7 @@ This module contains the ORM model and DTO models related to the Tags entity
 
 from typing import Optional
 from sqlalchemy import Column, Integer, String, ForeignKey, UniqueConstraint
-from pydantic import BaseModel
+from pydantic import ConfigDict, BaseModel
 from app.api.v1.tag_groups.model import TagGroupResponse
 from app.api.v1.tag_groups.service import TagGroupService
 from app.common.database import Base
@@ -22,9 +22,7 @@ class Tag(Base):
     )
 
     __table_args__ = (UniqueConstraint("name", name="uq_tags_name"),)
-
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     # don't understand why it stopped being able to generate the schema
     # def __get_pydantic_core_schema__(self):
@@ -49,8 +47,8 @@ class TagCreateRequest(BaseModel):
 
 class TagUpdateRequest(BaseModel):
     id: int
-    name: Optional[str]
-    tag_group_id: Optional[int]
+    name: Optional[str] = None
+    tag_group_id: Optional[int] = None
 
 
 class TagResponse(BaseModel):

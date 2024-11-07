@@ -156,7 +156,9 @@ evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / stateme
 [BASIC]
 
 # Good variable names which should always be accepted, separated by a comma
-good-names=main,_
+good-names=main,_, metadata-service
+
+# (adding metadata-service to good-names makes pytest not find tests) - why?
 
 # Bad variable names which should always be refused, separated by a comma
 bad-names=
@@ -238,7 +240,7 @@ generated-members=
 [FORMAT]
 
 # Maximum number of characters on a single line.
-max-line-length=88
+max-line-length=110
 
 # TODO(https://github.com/pylint-dev/pylint/issues/3352): Direct pylint to exempt
 # lines made too long by directives to pytype.
