@@ -1,3 +1,5 @@
+![pylint](https://img.shields.io/badge/pylint-10.00-darkred?logo=python&logoColor=white) 
+
 
 # Metatdata Service
 
@@ -70,6 +72,26 @@ To remove the DB and start fresh, run:
 docker volume rm metadata_db
 ```
 
+## Makefile
+In the makefile, you will find commands that will help you during development
+
+to run tests, run:
+```sh
+make test
+```
+
+to run linter, formatter and tests, run:
+```sh
+make perfect
+```
+
+allway run this before pushing, as build will fail for 
+* failing tests
+* coverage lower then 80%
+* formatting issues
+* linting issues
+
+## 
 ## Deploying to development
 
 To deploy to development, run the github action: "Build and push Metadata service for dev cluster"

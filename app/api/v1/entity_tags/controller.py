@@ -168,7 +168,6 @@ def reset(
     results = []
     for reset_request in reset_requests:
         try:
-
             reset_entity_response = entity_tag_service.reset_entity_tags_by_name(
                 reset_request, tag_service, tag_group_service
             )

@@ -60,7 +60,7 @@ jobs:
 
       - name: Log in to Argo CD HiBob ST
         env:
-          ARGOCD_SERVER: argocd.hibob.st.khulnasoft.ai
+          ARGOCD_SERVER: argocd.hibob.st.khulnasoft.com
           ARGOCD_USERNAME: admin
           ARGOCD_PASSWORD: ${{ secrets.ST_HIBOB_ARGOCD_PASSWORD }}
         run: |
@@ -85,7 +85,7 @@ jobs:
 
       - name: Log in to Argo CD Taxfix ST
         env:
-          ARGOCD_SERVER: argocd.taxfix.st.khulnasoft.ai
+          ARGOCD_SERVER: argocd.taxfix.st.khulnasoft.com
           ARGOCD_USERNAME: admin
           ARGOCD_PASSWORD: ${{ secrets.ST_TAXFIX_ARGOCD_PASSWORD }}
         run: |
@@ -110,7 +110,7 @@ jobs:
 
       - name: Log in to Argo CD Intuitive Surgical ST
         env:
-          ARGOCD_SERVER: argocd.intuitive-surgical.st.khulnasoft.ai
+          ARGOCD_SERVER: argocd.intuitive-surgical.st.khulnasoft.com
           ARGOCD_USERNAME: admin
           ARGOCD_PASSWORD: ${{ secrets.ST_INTUITIVE_SURGICAL_ARGOCD_PASSWORD }}
         run: |
@@ -134,7 +134,7 @@ jobs:
               --upsert
       - name: Log in to Argo CD Next Insurance ST
         env:
-          ARGOCD_SERVER: argocd.next-insurance.st.khulnasoft.ai
+          ARGOCD_SERVER: argocd.next-insurance.st.khulnasoft.com
           ARGOCD_USERNAME: admin
           ARGOCD_PASSWORD: ${{ secrets.ST_NEXT_INSURANCE_ARGOCD_PASSWORD }}
         run: |

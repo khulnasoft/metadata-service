@@ -66,7 +66,6 @@ class Settings:
 
 
 def get_connection_url():
-
     user = _settings.database_user
     password = _settings.database_password
     name = _settings.database_name

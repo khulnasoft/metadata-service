@@ -56,7 +56,6 @@ class EntityTagService:
         tag_service: TagService,
         tag_group_service: TagGroupService,
     ) -> ResetEntityTagsByNameResponse:
-
         tags_created: List[Tag] = []
         errors: List[str] = []
 

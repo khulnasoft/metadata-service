@@ -1,3 +1,4 @@
 .khulnasoft
 venv
 app/config/.secrets.toml
+.pytest_cache/

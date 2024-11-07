@@ -29,7 +29,7 @@ class TagGroupCreateRequest(BaseModel):
 class TagGroupResponse(BaseModel):
     id: int
     name: str
-    description: Optional[str]
+    description: Optional[str] = None
 
     @classmethod
     def from_tag_group(cls, tag_group):

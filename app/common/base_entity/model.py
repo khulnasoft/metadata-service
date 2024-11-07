@@ -4,7 +4,7 @@ This module contains models that are used across multiple entities.
 
 from enum import Enum
 from typing import Optional, TypeVar, Generic, List
-from pydantic import BaseModel
+from pydantic import ConfigDict, BaseModel
 
 from app.common.constants import MAX_SEARCH_RESULTS
 
@@ -66,9 +66,7 @@ class AdvancedSearchResponse(BaseModel, Generic[T]):
     count: int
     offset: int
     count_total: int
-
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class DeleteResponse(BaseModel):

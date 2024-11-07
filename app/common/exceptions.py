@@ -1,11 +1,15 @@
-""" Global exception handlers and custom exceptions and for the application """
+"""Global exception handlers and custom exceptions and for the application"""
 
-from app.common.utils.logging_utils import get_logger
+from pydantic import BaseModel
+from typing import Optional
 
-logger = get_logger()
+
+class ErrorDetail(BaseModel):
+    code: int
+    message: str
+    details: Optional[str] = None  # Additional information, if any
+    request: Optional[str] = None  # Request information, if any
 
 
-class NotFoundError(Exception):
-    def __init__(self, message: str):
-        self.message = message
-        super().__init__(self.message)
+class ExceptionResponse(BaseModel):
+    error: ErrorDetail

@@ -45,7 +45,6 @@ class TagGroupService:
         search_type: str = FilterType.CONTAINS,
         is_case_sensitive: bool = False,
     ) -> list[TagGroup]:
-
         return self.repository.search(field, value, search_type, is_case_sensitive)
 
     def update(

@@ -1,6 +1,6 @@
-""" BaseRepository """
+"""BaseRepository"""
 
-from sqlalchemy import asc, desc, and_, or_, inspect
+from sqlalchemy import asc, desc, and_, or_, inspect, true
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.orm import Session
 from typing import Type, TypeVar, Generic, List
@@ -40,7 +40,6 @@ class BaseRepository(Generic[T]):
         filter_type: str = FilterType.CONTAINS,
         is_case_sensitive: bool = False,
     ) -> List[T]:
-
         if value is not None and not is_case_sensitive:
             value = value.lower()
 
@@ -122,7 +121,7 @@ class BaseRepository(Generic[T]):
                 filter_clauses.append(or_(*value_clauses))
 
         if search_req.filters_operator == LogicOperator.AND:
-            query = query.filter(and_(*filter_clauses))
+            query = query.filter(and_(true(), *filter_clauses))
         else:
             query = query.filter(or_(*filter_clauses))
 

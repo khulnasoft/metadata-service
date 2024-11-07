@@ -1,21 +1,18 @@
-""" Service Entry Point """
+"""Service Entry Point"""
 
 from fastapi import FastAPI
-from fastapi.exception_handlers import (
-    request_validation_exception_handler,
-)
 from fastapi.exceptions import HTTPException
 from starlette.responses import JSONResponse
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
-from api.v1.tag_groups import controller as tag_group_controller
-from api.v1.general import controller as general_controller
-from api.v1.tags import controller as tags_controller
-from api.v1.entity_tags import controller as entity_tags_controller
-from common.config import settings
-from common.constants import DEFAULT_APP_PORT
-from common.utils.logging_utils import setup_logger, LoggingFormat
-from alembic import command
-from alembic.config import Config
+from app.api.v1.tag_groups import controller as tag_group_controller
+from app.api.v1.general import controller as general_controller
+from app.api.v1.tags import controller as tags_controller
+from app.api.v1.entity_tags import controller as entity_tags_controller
+from app.common.config import settings
+from app.common.constants import DEFAULT_APP_PORT
+from app.common.exceptions import ExceptionResponse, ErrorDetail
+from app.common.utils.logging_utils import setup_logger, LoggingFormat
+from app.schema_migration import run_alembic_upgrade
 
 logger = setup_logger(level="DEBUG", fmt=LoggingFormat.CONSOLE)
 
@@ -25,25 +22,6 @@ app.include_router(tag_group_controller.router, prefix="/api/v1")
 app.include_router(general_controller.router, prefix="/api/v1")
 app.include_router(tags_controller.router, prefix="/api/v1")
 app.include_router(entity_tags_controller.router, prefix="/api/v1")
-
-
-def run_alembic_upgrade():
-    # inject values from dynoconf
-    # Alembic Config object
-    # alembic_cfg = context.config
-    # alembic_cfg.set_main_option("sqlalchemy.url", settings.get("DATABASE_URL"))
-
-    alembic_cfg = Config()
-    alembic_cfg.set_main_option("script_location", "./migrations")
-    alembic_cfg.set_main_option("sqlalchemy.url", settings.database_url)
-    # alembic_cfg = Config("alembic.ini")
-    try:
-        logger.info("Running Alembic upgrade")
-        command.upgrade(alembic_cfg, "head")
-        logger.info("Alembic upgrade completed successfully")
-    except Exception as e:
-        logger.error(f"Alembic upgrade failed: {e}")
-        raise
 
 
 if __name__ == "__main__":
@@ -59,17 +37,34 @@ if __name__ == "__main__":
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc: Exception):
-    logger.error(f"Unhandled exception: {exc}, request: {request}")
+    error_response = ExceptionResponse(
+        error=ErrorDetail(
+            code=HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Internal Server Error",
+            details=str(exc),
+            request=str(request),
+        )
+    )
+    logger.error(error_response.model_dump())
     return JSONResponse(
-        status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"detail": "Internal Server Error"},
+        status_code=HTTP_500_INTERNAL_SERVER_ERROR, content=error_response.model_dump()
     )
 
 
 @app.exception_handler(HTTPException)
-async def custom_validation_exception_handler(request, exc):
-    logger(f"OMG! The client sent invalid data!: {exc}")
-    return await request_validation_exception_handler(request, exc)
+async def custom_validation_exception_handler(request, exc: HTTPException):
+    error_response = ExceptionResponse(
+        error=ErrorDetail(
+            code=exc.status_code,
+            message="Internal Server Error",
+            details=str(exc),
+            request=str(request),
+        )
+    )
+    logger.error(error_response.model_dump())
+    return JSONResponse(
+        status_code=exc.status_code, content=error_response.model_dump()
+    )
 
 
 app.add_exception_handler(Exception, global_exception_handler)
