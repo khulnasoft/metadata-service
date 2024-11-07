@@ -186,8 +186,8 @@ def assert_entity_tags_bulk_delete(
         BulkResponse[EntityTagDeleteRequest, DeleteResponse],
     )
 
-    assert (
-        len(delete_bulk_response.success) == len(delete_requests)
+    assert len(delete_bulk_response.success) == len(
+        delete_requests
     ), f"Expected {len(delete_requests)} delete requests, but got {len(delete_bulk_response.success)}"
     assert (
         len(delete_bulk_response.errors) == 0
