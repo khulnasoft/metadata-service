@@ -4,7 +4,7 @@ It handles all http requests related to the TagGroup entity.
 It uses the TagGroupService to perform the business logic.
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from readyapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api.v1.tag_groups.model import (
     TagGroupResponse,

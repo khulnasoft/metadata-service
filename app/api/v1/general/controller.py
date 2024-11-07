@@ -3,7 +3,7 @@ This module contains the general controller for the service.
 It handles all http requests that are not entity specific.
 """
 
-from fastapi import APIRouter
+from readyapi import APIRouter
 
 from app.api.v1.general.types import HealthCheckResponse, VersionResponse
 from app.common.config import settings

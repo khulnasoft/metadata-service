@@ -6,7 +6,7 @@ It uses the service layer to perform the business logic.
 
 import traceback
 
-from fastapi import APIRouter, Depends, HTTPException
+from readyapi import APIRouter, Depends, HTTPException
 from app.api.v1.tag_groups.controller import get_tag_group_service
 from app.api.v1.tags.model import TagResponse, TagCreateRequest, Tag
 from app.api.v1.tags.service import TagService, get_tag_service

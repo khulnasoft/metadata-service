@@ -13,7 +13,7 @@ from app.api.v1.tags.repository import TagRepository
 from app.common.base_entity.model import AdvancedSearchRequest, AdvancedSearchResponse
 from app.common.database import get_db
 from app.common.utils.logging_utils import get_logger
-from fastapi import Depends
+from readyapi import Depends
 
 logger = get_logger()
 

@@ -1,4 +1,4 @@
-fastapi==0.110.0
+readyapi @ git+https://github.com/readyapi/readyapi@master
 uvicorn==0.29.0
 sqlalchemy==2.0.31
 psycopg2==2.9.9

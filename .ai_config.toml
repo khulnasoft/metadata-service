@@ -9,5 +9,5 @@ exclude = ['tests/*']
 project_type = "microservice"
 capability = ["tagging", "metadata management"]
 languages = ["python"]
-framework = ["fastapi", "sql-alchemy", "alembic" ]
+framework = ["readyapi", "sql-alchemy", "alembic" ]
 team = ["backend", "enterprize"]

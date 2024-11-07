@@ -1,7 +1,7 @@
 """Service Entry Point"""
 
-from fastapi import FastAPI
-from fastapi.exceptions import HTTPException
+from readyapi import ReadyAPI
+from readyapi.exceptions import HTTPException
 from starlette.responses import JSONResponse
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from app.api.v1.tag_groups import controller as tag_group_controller
@@ -16,7 +16,7 @@ from app.schema_migration import run_alembic_upgrade
 
 logger = setup_logger(level="DEBUG", fmt=LoggingFormat.CONSOLE)
 
-app = FastAPI()
+app = ReadyAPI()
 
 app.include_router(tag_group_controller.router, prefix="/api/v1")
 app.include_router(general_controller.router, prefix="/api/v1")

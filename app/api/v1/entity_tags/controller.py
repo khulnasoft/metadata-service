@@ -5,7 +5,7 @@ It uses the service layer to perform the business logic.
 """
 
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from readyapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
 
