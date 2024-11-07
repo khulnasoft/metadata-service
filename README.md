@@ -87,7 +87,7 @@ make perfect
 
 allway run this before pushing, as build will fail for 
 * failing tests
-* coverage lower then 80%
+* coverage lower then 60%
 * formatting issues
 * linting issues
 

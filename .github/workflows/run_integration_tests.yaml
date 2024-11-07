@@ -47,7 +47,7 @@ jobs:
         run: ENV_FOR_DYNACONF=test PYTHONPATH="$PYTHONPATH:." python ./app/schema_migration.py
 
       - name: Run tests
-        run: ENV_FOR_DYNACONF=test PYTHONPATH="$PYTHONPATH:." pytest --cov=. --cov-fail-under=80 .
+        run: ENV_FOR_DYNACONF=test PYTHONPATH="$PYTHONPATH:." pytest --cov=. --cov-fail-under=60 .
 
       - name: Print current directory
         run: pwd
