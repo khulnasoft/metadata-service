@@ -34,7 +34,7 @@ jobs:
           cat pytest_fixtures.txt
 
       - name: Upload Fixtures Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pytest_fixtures
           path: pytest_fixtures.txt
