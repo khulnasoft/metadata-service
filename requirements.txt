@@ -1,7 +1,7 @@
 readyapi @ git+https://github.com/readyapi/readyapi@master
 poetry==1.8.4
 uvicorn==0.29.0
-sqlalchemy==2.0.31
+sqlalchemy==2.0.36
 psycopg2==2.9.9
 alembic== 1.13.2
 pydantic==2.8.2
