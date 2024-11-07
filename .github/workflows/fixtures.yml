@@ -1,0 +1,40 @@
+name: List Pytest Fixtures
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  list-fixtures:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest  # Ensure pytest is installed if not in requirements.txt
+
+      - name: List Pytest Fixtures
+        run: |
+          pytest --fixtures > pytest_fixtures.txt
+          cat pytest_fixtures.txt
+
+      - name: Upload Fixtures Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: pytest_fixtures
+          path: pytest_fixtures.txt
