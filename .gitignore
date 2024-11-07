@@ -2,3 +2,4 @@
 venv
 app/config/.secrets.toml
 .pytest_cache/
+dist/
