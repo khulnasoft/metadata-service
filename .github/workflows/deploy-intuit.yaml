@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name : Checkouts
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - id: dockerx
         name: Set up Docker Buildx
